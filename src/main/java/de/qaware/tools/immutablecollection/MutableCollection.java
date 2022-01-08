@@ -1,11 +1,12 @@
 package de.qaware.tools.immutablecollection;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-public interface MutableList<E> extends ImmutableList<E>, List<E>, MutableCollection<E> {
+public interface MutableCollection<E> extends ImmutableCollection<E>, Collection<E> {
 
     static <E> MutableList<E> wrap(List<E> list) {
         return ProxyUtil.wrap(list, List.class, MutableList.class,

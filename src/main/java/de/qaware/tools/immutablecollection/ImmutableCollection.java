@@ -6,6 +6,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 public interface ImmutableCollection<E> {
+
+
     int size();
 
     boolean isEmpty();
@@ -27,4 +29,6 @@ public interface ImmutableCollection<E> {
     Spliterator<E> spliterator();
 
     ImmutableIterator<E> immutableIterator();
+
+    Collection<E> unwrap();
 }
