@@ -9,8 +9,8 @@ public interface MutableList<E> extends ImmutableList<E>, List<E>, MutableCollec
 
     static <E> MutableList<E> wrap(List<E> list) {
         return ProxyUtil.wrap(list, List.class, MutableList.class,
-                ProxyUtil.UNWRAP_INVOCATION_HANDLER_FACTORY.apply(list),
-                ProxyUtil.IMMUTABLE_ITERATOR_INVOCATION_HANDLER_FACTORY.apply(list)
+                ProxyUtil.UNWRAP_INVOCATION_HANDLER,
+                ProxyUtil.IMMUTABLE_ITERATOR_INVOCATION
         );
     }
 

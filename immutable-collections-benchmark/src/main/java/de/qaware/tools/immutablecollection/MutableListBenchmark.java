@@ -1,6 +1,5 @@
-package de.qaware.tools.immutablecollection.benchmark;
+package de.qaware.tools.immutablecollection;
 
-import de.qaware.tools.immutablecollection.MutableList;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Fork(5)
-@Warmup(iterations = 10, time = 1)
+@Warmup(iterations = 5, time = 1)
 @Measurement(iterations = 5, time = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
@@ -30,11 +29,13 @@ public class MutableListBenchmark {
 
     private List<String> items;
     private MutableList<String> mutableList;
+    private MutableList<String> mutableListNoop;
 
     @Setup
     public void setup() {
         items = List.of("item1", "item2");
         mutableList = MutableList.wrap(items);
+        mutableListNoop = ProxyUtil.createProxy(List.class, MutableList.class, (proxy, method, args) -> method.invoke(items, args));
     }
 
     @Benchmark
@@ -55,6 +56,11 @@ public class MutableListBenchmark {
     @Benchmark
     public Object get() {
         return mutableList.get(0);
+    }
+
+    @Benchmark
+    public Object get_noop() {
+        return mutableListNoop.get(0);
     }
 
 }
