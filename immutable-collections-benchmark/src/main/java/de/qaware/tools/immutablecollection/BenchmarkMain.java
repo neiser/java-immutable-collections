@@ -3,15 +3,18 @@ package de.qaware.tools.immutablecollection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.openjdk.jmh.results.Result;
+import org.openjdk.jmh.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.util.ClassUtils;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -21,7 +24,7 @@ import java.util.stream.DoubleStream;
 public class BenchmarkMain {
 
     private static final String GROUP_SEPARATOR = "_";
-    private static final String BASELINE_SUFFIX = "_baseline";
+    private static final String BASELINE_PREFIX = "baselineFor_";
 
     public static void main(String[] args) throws Exception {
         var options = new OptionsBuilder()
@@ -31,23 +34,43 @@ public class BenchmarkMain {
                 .build();
         Runner runner = new Runner(options);
         var runResults = runner.run().stream()
-                .collect(Collectors.toMap(r -> r.getParams().getBenchmark(), x -> x));
+                .collect(Collectors.toMap(r -> r.getParams().getBenchmark(), x -> x, (a, b) -> a, TreeMap::new));
 
         var slowDownResults = runResults.entrySet().stream()
                 .flatMap(runResultEntry -> extractGroupPrefix(runResultEntry.getKey())
-                        .flatMap(groupPrefix -> Optional.ofNullable(runResults.get(groupPrefix + BASELINE_SUFFIX))
-                                .map(baselineResult -> SlowDownResult.of(runResultEntry.getKey(), runResultEntry.getValue().getPrimaryResult(), baselineResult.getPrimaryResult())))
+                        .flatMap(groupPrefix -> findBaselineResult(runResults, groupPrefix)
+                                .map(baselineResult -> SlowDownResult.of(runResultEntry, baselineResult)))
                         .stream()
                 ).collect(Collectors.toList());
 
         SlowDownResult.print(slowDownResults, System.out);
     }
 
+    private static Optional<RunResult> findBaselineResult(Map<String, RunResult> runResults, String groupPrefix) {
+        return runResults.keySet().stream()
+                .filter(benchmarkName -> {
+                    var strippedBenchmarkName = stripBenchmarkName(benchmarkName);
+                    if (strippedBenchmarkName.startsWith(BASELINE_PREFIX)) {
+                        String[] groups = strippedBenchmarkName.substring(BASELINE_PREFIX.length()).split(GROUP_SEPARATOR);
+                        return Arrays.asList(groups).contains(groupPrefix);
+                    }
+                    return false;
+                })
+                .findAny()
+                .map(runResults::get);
+    }
+
+
     private static Optional<String> extractGroupPrefix(String benchmarkName) {
-        if (benchmarkName.endsWith(BASELINE_SUFFIX)) {
+        var strippedBenchmarkName = stripBenchmarkName(benchmarkName);
+        if (strippedBenchmarkName.startsWith(BASELINE_PREFIX)) {
             return Optional.empty();
         }
-        return Optional.of(benchmarkName.split(GROUP_SEPARATOR)[0]);
+        return Optional.of(strippedBenchmarkName.split(GROUP_SEPARATOR)[0]);
+    }
+
+    private static String stripBenchmarkName(String benchmarkName) {
+        return benchmarkName.substring(benchmarkName.lastIndexOf('.') + 1);
     }
 
     @RequiredArgsConstructor
@@ -58,7 +81,10 @@ public class BenchmarkMain {
         private final double slowDown;
         private final double slowDownError;
 
-        static SlowDownResult of(String benchmarkName, Result<?> result, Result<?> baselineResult) {
+        static SlowDownResult of(Map.Entry<String, RunResult> runResultEntry, RunResult baselineRunResult) {
+            var baselineResult = baselineRunResult.getPrimaryResult();
+            var result = runResultEntry.getValue().getPrimaryResult();
+            var benchmarkName = runResultEntry.getKey();
             double slowDown = result.getScore() / baselineResult.getScore();
             double relativeSlowDownError = calculateGaussianError(relativeScoreError(result), relativeScoreError(baselineResult));
             return new SlowDownResult(benchmarkName, slowDown, slowDown * relativeSlowDownError);

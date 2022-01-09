@@ -50,7 +50,7 @@ class ProxyUtil {
     }
 
     @SuppressWarnings("unchecked")
-    static <D, W extends D, T extends W> T createProxy(Class<D> delegateType, Class<W> wrapperType, InvocationHandler invocationHandler) {
+    static <D, W extends D, T> T createProxy(Class<D> delegateType, Class<W> wrapperType, InvocationHandler invocationHandler) {
         return (T) Proxy.newProxyInstance(wrapperType.getClassLoader(), new Class[]{delegateType, wrapperType}, invocationHandler);
     }
 
