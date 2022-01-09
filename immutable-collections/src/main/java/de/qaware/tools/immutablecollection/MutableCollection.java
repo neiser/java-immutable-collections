@@ -9,10 +9,7 @@ import java.util.stream.Stream;
 public interface MutableCollection<E> extends ImmutableCollection<E>, Collection<E> {
 
     static <E> MutableCollection<E> wrap(Collection<E> collection) {
-        return ProxyUtil.wrap(collection, Collection.class, MutableCollection.class,
-                ProxyUtil.UNWRAP_INVOCATION_HANDLER,
-                ProxyUtil.IMMUTABLE_ITERATOR_INVOCATION
-        );
+        return new DelegatingMutableCollection<>(collection);
     }
 
     // define again to avoid confusion

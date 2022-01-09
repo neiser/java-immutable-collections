@@ -10,13 +10,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ImmutableListTest {
 
-    private static final List<String> MUTABLE_LIST = List.of("item1", "item2");
+    private static final List<String> LIST = List.of("item1", "item2");
 
     private ImmutableList<String> sut;
 
     @BeforeEach
     void setUp() {
-        sut = MutableList.wrap(MUTABLE_LIST);
+        sut = MutableList.wrap(LIST);
     }
 
     @Test
@@ -32,16 +32,16 @@ class ImmutableListTest {
 
     @Test
     void equals() {
-        assertThat(sut).isEqualTo(MUTABLE_LIST);
+        assertThat(sut).isEqualTo(LIST).isEqualTo(sut);
     }
 
     @Test
     void unwrap() {
-        assertThat(sut.unwrap()).isSameAs(MUTABLE_LIST);
+        assertThat(sut.unwrap()).isSameAs(LIST);
     }
 
     @Test
     void immutableIterator() {
-        assertThat(sut.immutableIterator().unwrap()).toIterable().containsExactlyElementsOf(MUTABLE_LIST);
+        assertThat(sut.immutableIterator().unwrap()).toIterable().containsExactlyElementsOf(LIST);
     }
 }

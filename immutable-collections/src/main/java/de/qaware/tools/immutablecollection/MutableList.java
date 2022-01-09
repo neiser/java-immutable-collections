@@ -9,10 +9,7 @@ import java.util.stream.Stream;
 public interface MutableList<E> extends ImmutableList<E>, List<E>, MutableCollection<E> {
 
     static <E> MutableList<E> wrap(List<E> list) {
-        return ProxyUtil.wrap(list, List.class, MutableList.class,
-                ProxyUtil.UNWRAP_INVOCATION_HANDLER,
-                ProxyUtil.IMMUTABLE_ITERATOR_INVOCATION
-        );
+        return new DelegatingMutableList<>(list);
     }
 
     // define again to avoid confusion

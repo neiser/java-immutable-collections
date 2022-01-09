@@ -31,13 +31,11 @@ public class ImmutableListBenchmark {
 
     private List<Integer> list;
     private ImmutableList<Integer> immutableList;
-    private ImmutableList<Integer> immutableListNoop;
 
     @Setup
     public void setup() {
         list = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         immutableList = MutableList.wrap(list);
-        immutableListNoop = ProxyUtil.createProxy(List.class, MutableList.class, (proxy, method, args) -> method.invoke(list, args));
     }
 
     @Benchmark
@@ -67,13 +65,6 @@ public class ImmutableListBenchmark {
         bh.consume(immutableList.get(0));
         bh.consume(immutableList.get(3));
         bh.consume(immutableList.get(7));
-    }
-
-    @Benchmark
-    public void get_noop(Blackhole bh) {
-        bh.consume(immutableListNoop.get(0));
-        bh.consume(immutableListNoop.get(3));
-        bh.consume(immutableListNoop.get(7));
     }
 
     @Benchmark
