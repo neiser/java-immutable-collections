@@ -42,6 +42,14 @@ class ImmutableListTest {
 
     @Test
     void immutableIterator() {
-        assertThat(sut.immutableIterator().unwrap()).toIterable().containsExactlyElementsOf(LIST);
+        assertThat(sut.immutableIterator().unwrap())
+                .toIterable().containsExactlyElementsOf(LIST);
+    }
+
+    @Test
+    void immutableSubList() {
+        assertThat(sut.immutableSubList(0, 0).unwrap()).isEmpty();
+        assertThat(sut.immutableSubList(1, 2).unwrap()).containsExactly("item2");
+        assertThat(sut.immutableSubList(0, 2)).isEqualTo(sut).isEqualTo(LIST);
     }
 }

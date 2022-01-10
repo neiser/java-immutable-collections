@@ -15,6 +15,21 @@ abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> e
     }
 
     @Override
+    public final ImmutableIterator<E> immutableIterator() {
+        return MutableIterator.wrap(delegate.iterator());
+    }
+
+    @Override
+    public final Iterator<E> iterator() {
+        return delegate.iterator();
+    }
+
+    @Override
+    public final void forEach(Consumer<? super E> action) {
+        delegate.forEach(action);
+    }
+
+    @Override
     public final int size() {
         return delegate.size();
     }
@@ -27,11 +42,6 @@ abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> e
     @Override
     public final boolean contains(Object o) {
         return delegate.contains(o);
-    }
-
-    @Override
-    public final Iterator<E> iterator() {
-        return delegate.iterator();
     }
 
     @Override
@@ -72,16 +82,6 @@ abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> e
     @Override
     public final <T> T[] toArray(T[] a) {
         return delegate.toArray(a);
-    }
-
-    @Override
-    public final ImmutableIterator<E> immutableIterator() {
-        return MutableIterator.wrap(delegate.iterator());
-    }
-
-    @Override
-    public final void forEach(Consumer<? super E> action) {
-        delegate.forEach(action);
     }
 
     @Override

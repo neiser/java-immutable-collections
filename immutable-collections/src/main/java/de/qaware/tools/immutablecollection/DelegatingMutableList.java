@@ -13,6 +13,11 @@ final class DelegatingMutableList<E> extends AbstractDelegatingMutableCollection
     }
 
     @Override
+    public ImmutableList<E> immutableSubList(int fromIndex, int toIndex) {
+        return new DelegatingMutableList<>(delegate.subList(fromIndex, toIndex));
+    }
+
+    @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         return delegate.addAll(c);
     }

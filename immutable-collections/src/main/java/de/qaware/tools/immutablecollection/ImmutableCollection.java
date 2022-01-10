@@ -2,12 +2,11 @@ package de.qaware.tools.immutablecollection;
 
 import java.util.Collection;
 import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-public interface ImmutableCollection<E> {
-
+public interface ImmutableCollection<E> extends ImmutableIterable<E> {
+    Collection<E> unwrap();
 
     int size();
 
@@ -16,8 +15,6 @@ public interface ImmutableCollection<E> {
     boolean contains(Object o);
 
     boolean containsAll(Collection<?> c);
-
-    void forEach(Consumer<? super E> action);
 
     Stream<E> stream();
 
@@ -30,8 +27,4 @@ public interface ImmutableCollection<E> {
     <T> T[] toArray(IntFunction<T[]> generator);
 
     Spliterator<E> spliterator();
-
-    ImmutableIterator<E> immutableIterator();
-
-    Collection<E> unwrap();
 }
