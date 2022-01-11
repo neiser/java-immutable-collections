@@ -1,27 +1,20 @@
 package de.qaware.tools.immutablecollection;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> extends AbstractDelegatingObject<D> implements MutableCollection<E> {
+abstract class AbstractDelegatingCollection<E, D extends Collection<E>> extends AbstractDelegatingObject<D> implements AlmostImmutableCollection<E> {
 
-    protected AbstractDelegatingMutableCollection(D delegate) {
+    protected AbstractDelegatingCollection(D delegate) {
         super(delegate);
     }
 
     @Override
     public final ImmutableIterator<E> immutableIterator() {
-        return MutableIterator.wrap(delegate.iterator());
-    }
-
-    @Override
-    public final Iterator<E> iterator() {
-        return delegate.iterator();
+        return AlmostImmutableIterator.wrap(delegate.iterator());
     }
 
     @Override
@@ -50,31 +43,6 @@ abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> e
     }
 
     @Override
-    public final boolean addAll(Collection<? extends E> c) {
-        return delegate.addAll(c);
-    }
-
-    @Override
-    public final boolean removeAll(Collection<?> c) {
-        return delegate.removeAll(c);
-    }
-
-    @Override
-    public final boolean removeIf(Predicate<? super E> filter) {
-        return delegate.removeIf(filter);
-    }
-
-    @Override
-    public final boolean retainAll(Collection<?> c) {
-        return delegate.retainAll(c);
-    }
-
-    @Override
-    public final void clear() {
-        delegate.clear();
-    }
-
-    @Override
     public final Object[] toArray() {
         return delegate.toArray();
     }
@@ -87,16 +55,6 @@ abstract class AbstractDelegatingMutableCollection<E, D extends Collection<E>> e
     @Override
     public final <T> T[] toArray(IntFunction<T[]> generator) {
         return delegate.toArray(generator);
-    }
-
-    @Override
-    public final boolean add(E e) {
-        return delegate.add(e);
-    }
-
-    @Override
-    public final boolean remove(Object o) {
-        return delegate.remove(o);
     }
 
     @Override

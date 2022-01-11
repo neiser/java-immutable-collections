@@ -30,12 +30,12 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class ImmutableListBenchmark {
 
     private List<Integer> list;
-    private ImmutableList<Integer> immutableList;
+    private AlmostImmutableList<Integer> immutableList;
 
     @Setup
     public void setup() {
         list = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        immutableList = MutableList.wrap(list);
+        immutableList = AlmostImmutableList.wrap(list);
     }
 
     @Benchmark
@@ -45,7 +45,7 @@ public class ImmutableListBenchmark {
 
     @Benchmark
     public Object wrap() {
-        return MutableList.wrap(list);
+        return AlmostImmutableList.wrap(list);
     }
 
     @Benchmark

@@ -6,8 +6,6 @@ import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 public interface ImmutableCollection<E> extends ImmutableIterable<E> {
-    Collection<E> unwrap();
-
     int size();
 
     boolean isEmpty();

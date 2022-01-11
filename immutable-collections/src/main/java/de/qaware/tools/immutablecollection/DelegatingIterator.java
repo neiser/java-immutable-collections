@@ -3,8 +3,8 @@ package de.qaware.tools.immutablecollection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-final class DelegatingMutableIterator<E> extends AbstractDelegatingObject<Iterator<E>> implements MutableIterator<E> {
-    DelegatingMutableIterator(Iterator<E> delegate) {
+final class DelegatingIterator<E> extends AbstractDelegatingObject<Iterator<E>> implements AlmostImmutableIterator<E> {
+    DelegatingIterator(Iterator<E> delegate) {
         super(delegate);
     }
 
@@ -16,11 +16,6 @@ final class DelegatingMutableIterator<E> extends AbstractDelegatingObject<Iterat
     @Override
     public E next() {
         return delegate.next();
-    }
-
-    @Override
-    public void remove() {
-        delegate.remove();
     }
 
     @Override

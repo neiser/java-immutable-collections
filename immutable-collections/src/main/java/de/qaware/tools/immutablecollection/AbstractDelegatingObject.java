@@ -18,8 +18,10 @@ abstract class AbstractDelegatingObject<D> {
     }
 
     @Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public final boolean equals(Object obj) {
+        if (obj instanceof AbstractDelegatingObject<?>) {
+            return delegate.equals(((AbstractDelegatingObject<?>) obj).delegate);
+        }
         return delegate.equals(obj);
     }
 
